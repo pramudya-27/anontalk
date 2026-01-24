@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matchmaker
+  namespace: anontalk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matchmaker
+  template:
+    metadata:
+      labels:
+        app: matchmaker
+    spec:
+      containers:
+        - name: matchmaker
+          image: dio713/anontalk-backend:latest
+          imagePullPolicy: Always
+          command: ["./main", "-mode", "worker"]
+          env:
+            - name: DATABASE_URL
+              value: "root:rootpassword@tcp(mysql:3306)/anontalk?charset=utf8mb4&parseTime=True&loc=Local"
+            - name: REDIS_ADDR
+              value: "redis:6379"

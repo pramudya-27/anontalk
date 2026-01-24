@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-api
+  namespace: anontalk
+spec:
+  type: ClusterIP
+  selector:
+    app: backend-api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-api
+  namespace: anontalk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-api
+  template:
+    metadata:
+      labels:
+        app: backend-api
+    spec:
+      containers:
+        - name: backend-api
+          image: dio713/anontalk-backend:latest
+          imagePullPolicy: Always
+          command: ["./main", "-mode", "api"]
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DATABASE_URL
+              value: "root:rootpassword@tcp(mysql:3306)/anontalk?charset=utf8mb4&parseTime=True&loc=Local"
+            - name: REDIS_ADDR
+              value: "redis:6379"
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SERVER_PORT

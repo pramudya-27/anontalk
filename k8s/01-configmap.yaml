@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: anontalk
+data:
+  MYSQL_HOST: "mysql"
+  MYSQL_PORT: "3306"
+  MYSQL_DB: "anontalk"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  SERVER_PORT: "8080"
