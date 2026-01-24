@@ -45,8 +45,8 @@ Railway matches your "Zero Config" desire similar to Vercel but supports Docker 
 4.  **Configuration**:
     - Railway usually auto-detects Dockerfiles.
     - Go to **Settings** -> **Build**.
-    - **Dockerfile Path**: Set this to `/backend/Dockerfile.combined` (Important!).
-    - **Context**: Set to `/backend`.
+    - **Dockerfile Path**: Set this to `/Dockerfile.combined` (It's now in the root!).
+    - **Context**: Set to `/` (Root directory).
 5.  **Variables**: Go to the **Variables** tab and add your Database details:
     - `DATABASE_URL`: `b3_40872396:daimyo266713@tcp(sql101.byethost3.com:3306)/b3_40872396_anontalk`
     - `JWT_SECRET`: (Create a secure random string)
