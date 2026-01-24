@@ -250,8 +250,19 @@ export class APIClient {
     onMessage: (message: any) => void,
     onError: (error: any) => void,
   ) {
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host.split(":")[0]}:8080/ws/chat/${sessionId}?token=${this.token}`;
+    // Derive WS URL from API_BASE_URL
+    let wsBaseUrl = API_BASE_URL.replace("http://", "ws://").replace(
+      "https://",
+      "wss://",
+    );
+
+    // If API_BASE_URL is relative (e.g. proxy), fallback to window.location
+    if (wsBaseUrl.startsWith("/")) {
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      wsBaseUrl = `${protocol}//${window.location.host}${wsBaseUrl}`;
+    }
+
+    const wsUrl = `${wsBaseUrl}/ws/chat/${sessionId}?token=${this.token}`;
 
     const ws = new WebSocket(wsUrl);
 
