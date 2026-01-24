@@ -1,0 +1,43 @@
+# Start from the official Golang image to build the binary
+FROM golang:1.23-alpine AS builder
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy go.mod and go.sum files
+COPY go.mod go.sum ./
+
+# Download all dependencies
+RUN go mod download
+
+# Copy the source code
+COPY . .
+
+# Build the application
+# CGO_ENABLED=0 creates a statically linked binary (no libc dependency)
+RUN CGO_ENABLED=0 GOOS=linux go build -o main .
+
+# Start a new stage from a small Alpine image
+FROM alpine:latest
+
+# Install ca-certificates (for HTTPS) and Redis
+RUN apk --no-cache add ca-certificates redis
+
+WORKDIR /root/
+
+# Copy the binary from the builder stage
+COPY --from=builder /app/main .
+COPY --from=builder /app/migrations ./migrations
+
+# Copy the entrypoint script
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
+
+# Create uploads directory
+RUN mkdir -p uploads
+
+# Expose the API port and Redis port
+EXPOSE 8080 6379
+
+# Use the entrypoint script to start both services
+ENTRYPOINT ["./entrypoint.sh"]
