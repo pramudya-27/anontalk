@@ -132,12 +132,15 @@ func main() {
 		router.Use(corsMiddleware)
 		router.Use(middleware.JSONMiddleware)
 
-		port := os.Getenv("SERVER_PORT")
+		port := os.Getenv("PORT")
+		if port == "" {
+			port = os.Getenv("SERVER_PORT")
+		}
 		if port == "" {
 			port = "8080"
 		}
 
-		fmt.Printf("Server running on http://localhost:%s\n", port)
+		fmt.Printf("Server running on http://0.0.0.0:%s\n", port)
 		log.Fatal(http.ListenAndServe(":"+port, router))
 	} else {
 		// If only worker is running, block here so main() doesn't exit

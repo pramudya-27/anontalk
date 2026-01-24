@@ -71,14 +71,37 @@ Railway matches your "Zero Config" desire similar to Vercel but supports Docker 
 
 ---
 
-## 5. Connecting Frontend to Backend
+## 5. Deploying Frontend to Vercel
 
-Once deployed, copy the **Public URL** from Railway/Render.
+1.  **Push Changes**:
+    Ensure you have committed and pushed the latest changes (fixing the WebSocket connection):
 
-1.  Open your local frontend code.
-2.  Update your `lib/api-client.ts` (or equivalent config).
-3.  Replace `http://localhost:8080` with your new production URL (e.g., `https://anontalk-production.up.railway.app`).
-4.  Commit and push the frontend changes to deploy the frontend (which _can_ stay on Vercel).
+    ```bash
+    git push
+    ```
+
+2.  **Go to Vercel**:
+    - Log in to [vercel.com](https://vercel.com).
+    - Click **"Add New..."** -> **"Project"**.
+    - Import your `anontalk` repository.
+
+3.  **Configure Project**:
+    - **Framework Preset**: Next.js (should be auto-detected).
+    - **Root Directory**: `./` (default).
+
+4.  **Environment Variables**:
+    Expand the "Environment Variables" section and add:
+    - **Key**: `NEXT_PUBLIC_API_URL`
+    - **Value**: `https://anontalk-production.up.railway.app` (Your active Railway URL)
+
+5.  **Deploy**:
+    Click **"Deploy"**. Vercel will build your frontend and publish it.
+
+6.  **Verify**:
+    Open your new Vercel URL. Try to:
+    - Signup/Login.
+    - Start a chat.
+    - Confirm messages send and receive.
 
 ---
 
