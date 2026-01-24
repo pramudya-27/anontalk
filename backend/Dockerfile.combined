@@ -26,11 +26,10 @@ RUN apk --no-cache add ca-certificates redis
 WORKDIR /root/
 
 # Copy the binary from the builder stage
+# Copy the binary from the builder stage
 COPY --from=builder /app/main .
 COPY --from=builder /app/migrations ./migrations
-
-# Copy the entrypoint script
-COPY entrypoint.sh .
+COPY --from=builder /app/entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
 # Create uploads directory
