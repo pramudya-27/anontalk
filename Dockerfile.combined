@@ -4,14 +4,14 @@ FROM golang:1.23-alpine AS builder
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy go.mod and go.sum files
-COPY go.mod go.sum ./
+# Copy go.mod and go.sum files (adjusted for Root Context)
+COPY backend/go.mod backend/go.sum ./
 
 # Download all dependencies
 RUN go mod download
 
-# Copy the source code
-COPY . .
+# Copy the source code (adjusted for Root Context)
+COPY backend/ .
 
 # Build the application
 # CGO_ENABLED=0 creates a statically linked binary (no libc dependency)
@@ -26,7 +26,6 @@ RUN apk --no-cache add ca-certificates redis
 WORKDIR /root/
 
 # Copy the binary from the builder stage
-# Copy the binary from the builder stage
 COPY --from=builder /app/main .
 COPY --from=builder /app/migrations ./migrations
 COPY --from=builder /app/entrypoint.sh .
@@ -37,6 +36,7 @@ RUN mkdir -p uploads
 
 # Expose the API port and Redis port
 EXPOSE 8080 6379
+
 
 # Use the entrypoint script to start both services
 ENTRYPOINT ["./entrypoint.sh"]
