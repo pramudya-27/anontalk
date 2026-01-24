@@ -11,12 +11,23 @@
 
 - [Docker](https://www.docker.com/) installed locally (for testing).
 - A GitHub repository containing this project.
-- Your Database Credentials:
-  - **Host**: `sql101.byethost3.com`
-  - **Port**: `3306`
-  - **User**: `b3_40872396`
-  - **Password**: `daimyo266713`
-  - **DB Name**: `b3_40872396_anontalk`
+- Your Database Credentials (Aiven):
+  - **Host**: `anontalk-basisdata-1.d.aivencloud.com`
+  - **Port**: `17892`
+  - **User**: `avnadmin`
+  - **Password**: `(See your Aiven Dashboard)`
+  - **DB Name**: `anontalk`
+
+> [!IMPORTANT]
+> **Initialize Database**: Your new Aiven database is likely empty. You MUST run the `migrations/001_init.sql` script to create the necessary tables before deploying.
+>
+> Run this command in your terminal (if you have mysql installed):
+>
+> ```bash
+> mysql --user avnadmin --password=YOUR_PASSWORD --host anontalk-basisdata-1.d.aivencloud.com --port 17892 anontalk < backend/migrations/001_init.sql
+> ```
+>
+> Or use a database tool (like DBeaver) to connect and run the SQL file content manually.
 
 ---
 
@@ -48,7 +59,7 @@ Railway matches your "Zero Config" desire similar to Vercel but supports Docker 
     - **Dockerfile Path**: Set this to `/Dockerfile.combined` (It's now in the root!).
     - **Context**: Set to `/` (Root directory).
 5.  **Variables**: Go to the **Variables** tab and add your Database details:
-    - `DATABASE_URL`: `b3_40872396:daimyo266713@tcp(sql101.byethost3.com:3306)/b3_40872396_anontalk`
+    - `DATABASE_URL`: `avnadmin:YOUR_PASSWORD@tcp(anontalk-basisdata-1.d.aivencloud.com:17892)/anontalk?parseTime=true&tls=skip-verify`
     - `JWT_SECRET`: (Create a secure random string)
     - `SERVER_PORT`: `8080`
 6.  **Deploy**: Railway will build and deploy.
@@ -109,4 +120,4 @@ Railway matches your "Zero Config" desire similar to Vercel but supports Docker 
 
 - **Frontend**: Hosted on **Vercel** (Next.js).
 - **Backend (API + Redis)**: Hosted on **Railway/Render** (Docker Container).
-- **Database**: Hosted on **ByetHost** (MySQL).
+- **Database**: Hosted on **Aiven** (MySQL).
