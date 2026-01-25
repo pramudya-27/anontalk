@@ -129,7 +129,7 @@ func main() {
 				next.ServeHTTP(w, r)
 			})
 		}
-		router.Use(corsMiddleware)
+		// Remove router.Use(corsMiddleware) as it doesn't handle 405s correctly within mux
 		router.Use(middleware.JSONMiddleware)
 
 		port := os.Getenv("PORT")
@@ -141,7 +141,7 @@ func main() {
 		}
 
 		fmt.Printf("Server running on http://0.0.0.0:%s\n", port)
-		log.Fatal(http.ListenAndServe(":"+port, router))
+		log.Fatal(http.ListenAndServe(":"+port, corsMiddleware(router)))
 	} else {
 		// If only worker is running, block here so main() doesn't exit
 		select {}
