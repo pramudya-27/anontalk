@@ -1,53 +1,40 @@
+# Start from the official Golang image to build the binary
+FROM golang:1.23-alpine AS builder
 
-FROM node:25-alpine AS base
-
-# Install dependencies only when needed
-FROM base AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
+# Set the working directory inside the container
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
-COPY package.json package-lock.json* ./
-RUN npm ci
+# Copy go.mod and go.sum files (Root Context)
+COPY backend/go.mod backend/go.sum ./
 
-# Rebuild the source code only when needed
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+# Download all dependencies
+RUN go mod download
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-ENV NEXT_TELEMETRY_DISABLED 1
+# Copy the source code (Root Context)
+COPY backend/ .
 
-RUN npm run build
+# Build the application
+# CGO_ENABLED=0 creates a statically linked binary (no libc dependency)
+RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 
-# Production image, copy all the files and run next
-FROM base AS runner
-WORKDIR /app
+# Start a new stage from a small Alpine image
+FROM alpine:latest
 
-ENV NODE_ENV production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-ENV NEXT_TELEMETRY_DISABLED 1
+# Install ca-certificates (for HTTPS)
+RUN apk --no-cache add ca-certificates
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+WORKDIR /root/
 
-COPY --from=builder /app/public ./public
+# Copy the binary from the builder stage
+COPY --from=builder /app/main .
+COPY --from=builder /app/migrations ./migrations
 
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Create uploads directory
+RUN mkdir -p uploads
 
-USER nextjs
+# Expose the API port
+EXPOSE 8080
 
-EXPOSE 3000
-
-ENV PORT 3000
-# set hostname to localhost
-ENV HOSTNAME "0.0.0.0"
-
-CMD ["node", "server.js"]
+# Command to run the executable
+ENTRYPOINT ["./main"]
+CMD ["-mode", "all"]
