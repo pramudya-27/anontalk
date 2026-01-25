@@ -132,7 +132,7 @@ export class APIClient {
     preferredGender: string[],
     interests: string[],
   ) {
-    return this.post("/api/matchmaking/join-queue", {
+    return this.post("/api/match/join", {
       gender,
       preferredGender,
       interests,
@@ -140,11 +140,11 @@ export class APIClient {
   }
 
   async leaveQueue() {
-    return this.post("/api/matchmaking/leave-queue", {});
+    return this.post("/api/match/leave", {});
   }
 
   async getMatchStatus() {
-    return this.get("/api/matchmaking/status");
+    return this.get("/api/match/status");
   }
 
   async findMatch() {
