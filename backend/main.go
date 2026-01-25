@@ -93,11 +93,11 @@ func main() {
 		router.HandleFunc("/api/match/leave", middleware.AuthRequired(matchHandler.LeaveQueue, db)).Methods(http.MethodPost)
 
 		// Chat routes
-		router.HandleFunc("/ws/chat", func(w http.ResponseWriter, r *http.Request) {
+		router.HandleFunc("/ws/chat/{sessionID}", func(w http.ResponseWriter, r *http.Request) {
 			handlers.HandleWebSocket(hub, w, r, db)
 		})
-		router.HandleFunc("/api/chat/messages", middleware.AuthRequired(chatHandler.GetMessages, db)).Methods(http.MethodGet)
-		router.HandleFunc("/api/chat/send", middleware.AuthRequired(chatHandler.SendMessage, db)).Methods(http.MethodPost)
+		router.HandleFunc("/api/chat/sessions/{sessionID}/messages", middleware.AuthRequired(chatHandler.GetMessages, db)).Methods(http.MethodGet)
+		router.HandleFunc("/api/chat/send-message", middleware.AuthRequired(chatHandler.SendMessage, db)).Methods(http.MethodPost)
 		router.HandleFunc("/api/chat/upload", middleware.AuthRequired(chatHandler.UploadFile, db)).Methods(http.MethodPost)
 		router.HandleFunc("/api/chat/sessions", middleware.AuthRequired(chatHandler.GetSessions, db)).Methods(http.MethodGet)
 		router.HandleFunc("/api/chat/sessions/{sessionID}/end", middleware.AuthRequired(chatHandler.EndSession, db)).Methods(http.MethodPost)
