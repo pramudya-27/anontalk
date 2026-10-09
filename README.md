@@ -60,7 +60,19 @@ A modern anonymous chat application where users match based on gender preference
 - Docker and Docker Compose (recommended)
 - Or: Node.js 18+, Go 1.21+, MySQL 8.0+
 
-### Start with Docker (Fastest)
+### Jalankan lokal dengan Make
+
+Prasyarat: Docker Compose, Node.js/npm, Go, dan Make.
+
+```bash
+make setup  # install dependency dan siapkan .env.local
+make dev    # jalankan MySQL, Redis, backend, dan frontend
+```
+
+Buka http://localhost:3000. Backend tersedia di http://localhost:8080.
+Gunakan `make clean` untuk menghentikan MySQL dan Redis.
+
+### Start with Docker
 
 ```bash
 # Clone the repository

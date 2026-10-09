@@ -129,7 +129,6 @@ func main() {
 				next.ServeHTTP(w, r)
 			})
 		}
-		router.Use(corsMiddleware)
 		router.Use(middleware.JSONMiddleware)
 
 		port := os.Getenv("SERVER_PORT")
@@ -138,7 +137,7 @@ func main() {
 		}
 
 		fmt.Printf("Server running on http://localhost:%s\n", port)
-		log.Fatal(http.ListenAndServe(":"+port, router))
+		log.Fatal(http.ListenAndServe(":"+port, corsMiddleware(router)))
 	} else {
 		// If only worker is running, block here so main() doesn't exit
 		select {}
