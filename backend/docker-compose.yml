@@ -12,11 +12,18 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./migrations/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql
+      - ./migrations/002_add_message_type.sql:/docker-entrypoint-initdb.d/002_add_message_type.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: anontalk-redis
+    ports:
+      - "6380:6379"
 
   backend:
     build: .

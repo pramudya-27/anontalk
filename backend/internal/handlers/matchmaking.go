@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/anontalk/backend/internal/database"
@@ -74,6 +75,7 @@ func (h *MatchHandler) GetStatus(w http.ResponseWriter, r *http.Request) {
 	// Check if user has active session
 	session, err := h.db.GetActiveSessionByUserID(userID)
 	if err != nil {
+		log.Printf("Error getting match status: %v", err)
 		http.Error(w, "Database error", http.StatusInternalServerError)
 		return
 	}
